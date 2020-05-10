@@ -1,0 +1,77 @@
+import matplotlib.pyplot as plt  # 导入绘图库
+import numpy as np
+
+'''
+@brief    位置式PID输出函数
+@param    [in] PID结构体
+@return    算法输出值（额外升力）
+'''
+
+
+def pid_out():
+    f_out = Kp * (Ek
+                  + (T / Ti) * sum_Ek
+                  + (Td / T) * (Ek - Ek_1))
+    return f_out
+
+
+'''
+@brief    获取当前偏差值
+@param    [in] PID结构体, 历史输出值（数组）
+@return    kaka当前状态偏差值
+'''
+
+
+def get_curr_e():
+    ek = init_val - 25 * (T ** 2) * sum_f_out
+    return ek
+
+
+sv = 0.0  # 设定值
+init_val = (3.1416) / 3  # 初始值
+T = 0.01  # 采样周期
+times = 300  # 计算次数
+e = np.zeros(times)
+for t in range(3):
+    Ek = 0.0  # 当前偏差
+    sum_Ek = 0.0  # 历史偏差之和
+    Ek_1 = 0.0  # 上一次偏差
+    sum_f_out = 0.0  # 输出值之和（升力）
+
+    if t == 0:
+        Kp = 50  # 比例系数
+        Ti = 5  # 积分时间常数
+        Td = 0.05  # 微分时间常数
+    if t == 1:
+        Kp = 50  # 比例系数
+        Ti = 0.05  # 积分时间常数
+        Td = 0.05  # 微分时间常数
+    if t == 2:
+        Kp = 50  # 比例系数
+        Ti = 5  # 积分时间常数
+        Td = 0.005  # 微分时间常数
+
+    '''
+    @brief    循环计算并输出值
+    @param    [in] 计算次数
+    '''
+    for i in range(times):
+        if i > 0:
+            Ek_1 = Ek
+
+        Ek = get_curr_e()  # 获取当前值
+        sum_Ek = sum_Ek + Ek  # 获取历史值之和
+
+        e[i] = Ek  # 储存当前值，方便后面绘图
+
+        if Ek != 0 and i > 0:
+            sum_f_out = sum_f_out + pid_out()  # 获取输出值之和
+
+    plt.plot(e, label='PID({0}, {1}, {2})'.format(Kp, Ti, Td))  # 画曲线图，显示PID图例
+
+plt.plot(np.zeros(times + 25), label='SV', linestyle='--')  # 设定值
+plt.legend()  # 显示图例
+
+plt.show()
+
+Python show all
